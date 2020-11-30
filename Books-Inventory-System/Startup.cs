@@ -33,6 +33,7 @@ namespace Books_Inventory_System
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
