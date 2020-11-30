@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Books_Inventory_System.Services.BookService
 {
     public class BookService : IBookService
     {
-        public BookService(IMapper mapper)
+        public BookService(IMapper mapper, DataContext dataContext)
         {
             this.mapper = mapper;
+            this.dataContext = dataContext;
         }
 
         private static List<Book> books = new List<Book>()
@@ -20,15 +23,18 @@ namespace Books_Inventory_System.Services.BookService
             new Book(),
             new Book{Id = 1, Name = "Delivering Happiness", Author = "Tony Hsieh", Description = "Zappos.com"}
         };
+
         private readonly IMapper mapper;
+        private readonly DataContext dataContext;
 
         public async Task<ServiceResponse<List<GetBookDto>>> AddBook(AddBookDto book)
         {
             ServiceResponse<List<GetBookDto>> serviceResponse = new ServiceResponse<List<GetBookDto>>();
             Book newBook = mapper.Map<Book>(book);
-            newBook.Id = books.Max(b => b.Id) + 1;
-            books.Add(newBook);
-            serviceResponse.Data = books.Select(b => mapper.Map<GetBookDto>(b)).ToList();
+            await dataContext.Books.AddAsync(newBook);
+            await dataContext.SaveChangesAsync();
+
+            serviceResponse.Data = dataContext.Books.Select(b => mapper.Map<GetBookDto>(b)).ToList();
 
             return serviceResponse;
         }
@@ -36,7 +42,9 @@ namespace Books_Inventory_System.Services.BookService
         public async Task<ServiceResponse<List<GetBookDto>>> GetAllBooks()
         {
             ServiceResponse<List<GetBookDto>> serviceResponse = new ServiceResponse<List<GetBookDto>>();
-            serviceResponse.Data = books.Select(b => mapper.Map<GetBookDto>(b)).ToList();
+
+            List<Book> dbBooks = await dataContext.Books.ToListAsync();
+            serviceResponse.Data = dbBooks.Select(b => mapper.Map<GetBookDto>(b)).ToList();
 
             return serviceResponse;
         }
@@ -44,7 +52,8 @@ namespace Books_Inventory_System.Services.BookService
         public async Task<ServiceResponse<GetBookDto>> GetBookById(int id)
         {
             ServiceResponse<GetBookDto> serviceResponse = new ServiceResponse<GetBookDto>();
-            serviceResponse.Data = mapper.Map<GetBookDto>(books.FirstOrDefault(b => b.Id == id));
+            Book dbBook = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == id);
+            serviceResponse.Data = mapper.Map<GetBookDto>(dbBook);
 
             return serviceResponse;
         }
@@ -55,12 +64,15 @@ namespace Books_Inventory_System.Services.BookService
 
             try
             {
-                Book foundBook = books.FirstOrDefault(b => b.Id == updateBook.Id);
+                Book foundBook = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == updateBook.Id);
                 foundBook.Name = updateBook.Name;
                 foundBook.Description = updateBook.Description;
                 foundBook.Author = updateBook.Author;
                 foundBook.Price = updateBook.Price;
                 foundBook.CategoryId = updateBook.CategoryId;
+
+                dataContext.Books.Update(foundBook);
+                await dataContext.SaveChangesAsync();
 
                 serviceResponse.Data = mapper.Map<GetBookDto>(foundBook);
                 serviceResponse.Message = "Book updated successfully";
@@ -80,10 +92,12 @@ namespace Books_Inventory_System.Services.BookService
 
             try
             {
-                Book foundBook = books.First(b => b.Id == id);
-                books.Remove(foundBook);
+                Book foundBook = await dataContext.Books.FirstAsync(b => b.Id == id);
+                dataContext.Books.Remove(foundBook);
 
-                serviceResponse.Data = books.Select(b => mapper.Map<GetBookDto>(b)).ToList();
+                await dataContext.SaveChangesAsync();
+
+                serviceResponse.Data = dataContext.Books.Select(b => mapper.Map<GetBookDto>(b)).ToList();
                 serviceResponse.Message = "Book deleted successfully";
             }
             catch (Exception)
