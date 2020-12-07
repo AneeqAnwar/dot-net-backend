@@ -46,6 +46,8 @@ namespace Books_Inventory_System
 
             //app.UseHttpsRedirection();
 
+            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
+
             app.UseRouting();
 
             app.UseAuthorization();
