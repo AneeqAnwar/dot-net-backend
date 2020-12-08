@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Models;
 using Books_Inventory_System.Services.BookService;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Books_Inventory_System.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("[controller]")]
 

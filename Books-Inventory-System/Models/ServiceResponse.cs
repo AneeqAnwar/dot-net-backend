@@ -1,5 +1,4 @@
-﻿using System;
-namespace Books_Inventory_System.Models
+﻿namespace Books_Inventory_System.Models
 {
     public class ServiceResponse<T>
     {

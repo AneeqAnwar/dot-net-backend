@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Books_Inventory_System.Models;
 
 namespace Books_Inventory_System.Data

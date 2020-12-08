@@ -1,5 +1,4 @@
-﻿using System;
-using Books_Inventory_System.Models;
+﻿using Books_Inventory_System.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Books_Inventory_System.Data

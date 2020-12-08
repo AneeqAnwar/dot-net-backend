@@ -18,12 +18,6 @@ namespace Books_Inventory_System.Services.BookService
             this.dataContext = dataContext;
         }
 
-        private static List<Book> books = new List<Book>()
-        {
-            new Book(),
-            new Book{Id = 1, Name = "Delivering Happiness", Author = "Tony Hsieh", Description = "Zappos.com"}
-        };
-
         private readonly IMapper mapper;
         private readonly DataContext dataContext;
 

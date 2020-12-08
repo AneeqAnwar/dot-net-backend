@@ -1,5 +1,4 @@
-﻿using System;
-namespace Books_Inventory_System.Dtos.User
+﻿namespace Books_Inventory_System.Dtos.User
 {
     public class UserLoginDto
     {

@@ -1,5 +1,4 @@
-﻿using System;
-namespace Books_Inventory_System.Dtos.Book
+﻿namespace Books_Inventory_System.Dtos.Book
 {
     public class AddBookDto
     {

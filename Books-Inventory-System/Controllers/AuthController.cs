@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.User;
 using Books_Inventory_System.Models;
@@ -25,7 +24,7 @@ namespace Books_Inventory_System.Controllers
                 new User { Username = request.Username }, request.Password
             );
 
-            if(response.Success == false)
+            if(!response.Success)
             {
                 return BadRequest(response);
             }
