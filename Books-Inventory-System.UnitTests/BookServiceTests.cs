@@ -30,7 +30,7 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task AddBookTest()
+        public async Task AddBook_NewBook_ReturnsGetBookDtoList()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -52,7 +52,7 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task GetBookByIdTest()
+        public async Task GetBookById_BookId_ReturnsGetBookDto()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -76,7 +76,7 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task GetAllBooksTest()
+        public async Task GetAllBooks_GetAll_ReturnsGetBookDtoList()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -98,7 +98,7 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task UpdateBookTest()
+        public async Task UpdateBook_ExistingBook_ReturnsGetBookDto()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -118,13 +118,30 @@ namespace Books_Inventory_System.UnitTests
 
             Assert.That(updatedBookResponse.Success, Is.EqualTo(true));
             Assert.That(updatedBookResponse, Is.InstanceOf<ServiceResponse<GetBookDto>>());
-            Assert.That(updatedBookResponse.Data, Is.InstanceOf<GetBookDto>());
             Assert.That(savedBook, Is.InstanceOf<GetBookDto>());
             Assert.That(savedBook.Price, Is.EqualTo(updatedBook.Price));
         }
 
         [Test]
-        public async Task DeleteBookTest()
+        public async Task UpdateBook_NonExistingBook_ReturnsError()
+        {
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+
+            UpdateBookDto updatedBook = GetUpdateBookDto();
+
+            BookService bookService = new BookService(mapper, dbContext);
+
+            ServiceResponse<GetBookDto> updatedBookResponse = await bookService.UpdateBook(updatedBook);
+            GetBookDto savedBook = updatedBookResponse.Data;
+
+            Assert.That(updatedBookResponse.Success, Is.EqualTo(false));
+            Assert.That(updatedBookResponse, Is.InstanceOf<ServiceResponse<GetBookDto>>());
+            Assert.That(updatedBookResponse.Data, Is.EqualTo(null));
+        }
+
+        [Test]
+        public async Task DeleteBook_ExistingBook_ReturnsGetBookDtoList()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -137,7 +154,6 @@ namespace Books_Inventory_System.UnitTests
             GetBookDto addedBook = addBookResponse.Data.First();
 
             ServiceResponse<List<GetBookDto>> deleteBookResponse = await bookService.DeleteBook(addedBook.Id);
-            List<GetBookDto> remainingBooks = deleteBookResponse.Data;
 
             Assert.That(deleteBookResponse.Success, Is.EqualTo(true));
             Assert.That(deleteBookResponse, Is.InstanceOf<ServiceResponse<List<GetBookDto>>>());
@@ -145,9 +161,33 @@ namespace Books_Inventory_System.UnitTests
             Assert.That(deleteBookResponse.Data.Count, Is.EqualTo(0));
         }
 
+        [Test]
+        public async Task DeleteBook_NonExistingBook_ReturnsError()
+        {
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+
+            BookService bookService = new BookService(mapper, dbContext);
+
+            ServiceResponse<List<GetBookDto>> deleteBookResponse = await bookService.DeleteBook(1);
+
+            Assert.That(deleteBookResponse.Success, Is.EqualTo(false));
+            Assert.That(deleteBookResponse, Is.InstanceOf<ServiceResponse<List<GetBookDto>>>());
+            Assert.That(deleteBookResponse.Data, Is.EqualTo(null));
+        }
+
         private AddBookDto GetAddBookDto()
         {
             return new AddBookDto
+            {
+                Name = "Delivering Happiness",
+                Author = "Tony Hsieh"
+            };
+        }
+
+        private UpdateBookDto GetUpdateBookDto()
+        {
+            return new UpdateBookDto
             {
                 Name = "Delivering Happiness",
                 Author = "Tony Hsieh"
