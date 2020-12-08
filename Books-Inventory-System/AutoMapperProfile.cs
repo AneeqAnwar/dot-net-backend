@@ -10,6 +10,7 @@ namespace Books_Inventory_System
         {
             CreateMap<Book, GetBookDto>();
             CreateMap<AddBookDto, Book>();
+            CreateMap<GetBookDto, UpdateBookDto>();
         }
     }
 }
