@@ -50,6 +50,7 @@ namespace Books_Inventory_System.UnitTests
             Assert.That(savedBook, Is.InstanceOf<GetBookDto>());
             Assert.That(savedBook.Name, Is.EqualTo(newBook.Name));
             Assert.That(savedBook.Author, Is.EqualTo(newBook.Author));
+            Assert.That(savedBook.Id, Is.EqualTo(1));
         }
 
         [Test]
@@ -182,7 +183,10 @@ namespace Books_Inventory_System.UnitTests
             return new AddBookDto
             {
                 Name = "Delivering Happiness",
-                Author = "Tony Hsieh"
+                Description = "zappos.com",
+                Author = "Tony Hsieh",
+                Price = 899,
+                CategoryId = 1
             };
         }
 
@@ -200,7 +204,8 @@ namespace Books_Inventory_System.UnitTests
             return new AddBookDto
             {
                 Name = "Introduction to Algorithms",
-                Author = "Thomas H. Cormen"
+                Author = "Thomas H. Cormen",
+                CategoryId = 2
             };
         }
     }

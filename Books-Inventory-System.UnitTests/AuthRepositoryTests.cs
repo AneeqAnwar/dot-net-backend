@@ -127,6 +127,7 @@ namespace Books_Inventory_System.UnitTests
         {
             return new User
             {
+                Id = 1,
                 Username = "Aneeq",
             };
         }
