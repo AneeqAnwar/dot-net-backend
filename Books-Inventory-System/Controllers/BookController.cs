@@ -60,5 +60,11 @@ namespace Books_Inventory_System.Controllers
             }
             return Ok(response);
         }
+
+        [HttpGet("Status")]
+        public IActionResult CheckStatus()
+        {
+            return Ok("The book inventory is up and running!");
+        }
     }
 }

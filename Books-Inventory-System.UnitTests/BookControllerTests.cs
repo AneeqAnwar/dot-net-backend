@@ -148,6 +148,17 @@ namespace Books_Inventory_System.UnitTests
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
 
+        [Test]
+        public void CheckStatus_ReturnsOk()
+        {
+            BookService bookService = new BookService(mapper, dbContext);
+            BookController bookController = new BookController(bookService);
+
+            var result = bookController.CheckStatus();
+
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+        }
+
         private AddBookDto GetAddBookDto()
         {
             return new AddBookDto
