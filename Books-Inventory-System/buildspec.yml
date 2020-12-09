@@ -9,8 +9,8 @@ phases:
   pre_build:
     commands:
       - echo Restore started on `date`
-      - pwd
       - ls
+      - cd Books-Inventory-System
       - dotnet restore Books-Inventory-System.csproj
       
   build:
