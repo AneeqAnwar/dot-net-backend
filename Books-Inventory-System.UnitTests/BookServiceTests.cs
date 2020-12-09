@@ -11,6 +11,7 @@ using NUnit.Framework;
 
 namespace Books_Inventory_System.UnitTests
 {
+    [TestFixture]
     public class BookServiceTests
     {
         private Mapper mapper;
