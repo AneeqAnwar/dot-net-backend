@@ -30,8 +30,8 @@ reports:
   UnitTestsReports:
     file-format: VisualStudioTrx
     files:
-        - '**/*'
-        base-directory: './testresults'
+      - '**/*'
+    base-directory: './testresults'
       
 artifacts:
   files:
