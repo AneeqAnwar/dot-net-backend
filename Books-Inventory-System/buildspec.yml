@@ -32,7 +32,7 @@ reports:
   UnitTestsReports:
     file-format: NUNIT3XML
     files:
-      - '**/*'
+      - 'TestResults.xml'
     base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
       
 artifacts:
