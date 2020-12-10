@@ -8,6 +8,8 @@ phases:
       
   pre_build:
     commands:
+      - echo Unit Tests Execution
+      - dotnet test --test-adapter-path:. --logger:nunit
       - echo Restore started on `date`
       - ls
       - cd Books-Inventory-System
@@ -23,6 +25,12 @@ phases:
       - echo Publish started on `date`
       - dotnet publish -c Release -r linux-x64 --self-contained false Books-Inventory-System.csproj
       - ls -R
+
+reports:
+  UnitTestsReports:
+    files:
+      - '**/*'
+    base-directory: 'Books-Inventory-System.UnitTests/TestResults/TestResults.xml'
       
 artifacts:
   files:
