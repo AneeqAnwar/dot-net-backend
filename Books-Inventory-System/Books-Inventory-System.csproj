@@ -14,8 +14,6 @@
     <Folder Include="Dtos\Book\" />
     <Folder Include="Data\" />
     <Folder Include="Dtos\User\" />
-    <Folder Include=".github\" />
-    <Folder Include=".github\workflows\" />
   </ItemGroup>
 
 
@@ -39,8 +37,5 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="OpenCover" Version="4.7.922" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".github\workflows\build.yml" />
   </ItemGroup>
 </Project>

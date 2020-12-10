@@ -9,7 +9,8 @@ phases:
   pre_build:
     commands:
       - echo Unit Tests Execution
-      - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage"
+      - mv Books-Inventory-System.UnitTests/TestResults/**/coverage.cobertura.xml Books-Inventory-System.UnitTests/TestResults
       - echo Restore started on `date`
       - cd Books-Inventory-System
       - dotnet restore Books-Inventory-System.csproj
@@ -29,6 +30,11 @@ reports:
     file-format: NUNIT3XML
     files:
       - 'TestResults.xml'
+    base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
+  CodeCoverageReports:
+    file-format: COBERTURAXML
+    files:
+      - 'coverage.cobertura.xml'
     base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
       
 artifacts:
