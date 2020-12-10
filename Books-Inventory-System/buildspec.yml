@@ -15,13 +15,7 @@ phases:
       - export PATH=$SONAR_SCANNER_HOME/bin:$PATH
       - export SONAR_SCANNER_OPTS="-server"
       - export SONAR_TOKEN=2f591a02651773cefb90c640dcdce3ce1ce47064
-      - sonar-scanner \
-  -Dsonar.organization=aneeqanwar \
-  -Dsonar.projectKey=AneeqAnwar_dot-net-backend \
-  -Dsonar.sources=. \
-  -Dsonar.host.url=https://sonarcloud.io \
-  -Dsonar.cs.nunit.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/TestResults.xml \
-  -Dsonar.cs.opencover.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/coverage.opencover.xml
+      - sonar-scanner -Dsonar.organization=aneeqanwar -Dsonar.projectKey=AneeqAnwar_dot-net-backend -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.cs.nunit.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/TestResults.xml -Dsonar.cs.opencover.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/coverage.opencover.xml
       - echo Unit Tests Execution
       - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
       - mv Books-Inventory-System.UnitTests/TestResults/**/coverage.opencover.xml Books-Inventory-System.UnitTests/TestResults
