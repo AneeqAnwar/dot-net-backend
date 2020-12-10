@@ -9,7 +9,7 @@ phases:
   pre_build:
     commands:
       - echo Unit Tests Execution
-      - dotnet test -c Release ./Books-Inventory-System.UnitTests/Books-Inventory-System.UnitTests.csproj  --logger trx --results-directory ./testresults
+      - dotnet test --test-adapter-path:. --logger:nunit
       - echo Restore started on `date`
       - ls
       - cd Books-Inventory-System
@@ -28,10 +28,10 @@ phases:
 
 reports:
   UnitTestsReports:
-    file-format: VisualStudioTrx
+    file-format: NUNIT3XML
     files:
       - '**/*'
-    base-directory: './testresults'
+    base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
       
 artifacts:
   files:
