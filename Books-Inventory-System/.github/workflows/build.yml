@@ -38,7 +38,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AneeqAnwar_dot-net-backend" /o:"aneeqanwar" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          pwd
-          echo $GITHUB_WORKSPACE
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AneeqAnwar_dot-net-backend" /o:"aneeqanwar" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.host.url="d:sonar.cs.nunit.reportsPaths=$GITHUB_WORKSPACE/Books-Inventory-System.UnitTests/TestResults/TestResults.xml" /d:sonar.cs.opencover.reportsPaths="$GITHUB_WORKSPACE/Books-Inventory-System.UnitTests/TestResults/coverage.opencover.xml"
+          dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          mv Books-Inventory-System.UnitTests/TestResults/**/coverage.opencover.xml Books-Inventory-System.UnitTests/TestResults
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
