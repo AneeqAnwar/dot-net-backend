@@ -10,10 +10,14 @@ phases:
     commands:
       - pwd
       - echo $CODEBUILD_SRC_DIR
+      - export SONAR_TOKEN=2f591a02651773cefb90c640dcdce3ce1ce47064
+      - dotnet sonarscanner begin   /o:aneeqanwar   /k:AneeqAnwar_dot-net-backend   /d:sonar.host.url=https://sonarcloud.io   /d:sonar.cs.nunit.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/TestResults.xml   /d:sonar.cs.opencover.reportsPaths=$CODEBUILD_SRC_DIR/Books-Inventory-System.UnitTests/TestResults/coverage.opencover.xml
       - echo Unit Tests Execution
       - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+      - mv Books-Inventory-System.UnitTests/TestResults/**/coverage.opencover.xml Books-Inventory-System.UnitTests/TestResults
+      - echo Run sonar analysis
+      - dotnet sonarscanner end
       - echo Restore started on `date`
-      - ls
       - cd Books-Inventory-System
       - dotnet restore Books-Inventory-System.csproj
       
@@ -26,7 +30,6 @@ phases:
     commands:
       - echo Publish started on `date`
       - dotnet publish -c Release -r linux-x64 --self-contained false Books-Inventory-System.csproj
-      - ls -R
 
 reports:
   UnitTestsReports:
