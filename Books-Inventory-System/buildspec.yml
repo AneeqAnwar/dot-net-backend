@@ -8,8 +8,10 @@ phases:
       
   pre_build:
     commands:
+      - pwd
+      - echo $CODEBUILD_SRC_DIR
       - echo Unit Tests Execution
-      - dotnet test --test-adapter-path:. --logger:nunit
+      - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
       - echo Restore started on `date`
       - ls
       - cd Books-Inventory-System
