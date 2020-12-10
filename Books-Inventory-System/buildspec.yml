@@ -30,7 +30,7 @@ reports:
   UnitTestsReports:
     files:
       - '**/*'
-    base-directory: 'Books-Inventory-System.UnitTests/TestResults/TestResults.xml'
+    base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
       
 artifacts:
   files:
