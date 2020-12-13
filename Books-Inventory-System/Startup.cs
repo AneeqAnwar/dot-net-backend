@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Services.BookService;
@@ -37,7 +38,8 @@ namespace Books_Inventory_System
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
+            string corsOrigin = Environment.GetEnvironmentVariable("AppSettings__corsOrigin");
+            app.UseCors(builder => builder.WithOrigins(corsOrigin).AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
 
