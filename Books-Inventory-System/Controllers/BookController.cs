@@ -19,7 +19,7 @@ namespace Books_Inventory_System.Controllers
             this.bookService = bookService;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             return Ok(await bookService.GetAllBooks());

@@ -28,6 +28,8 @@ namespace Books_Inventory_System
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +51,9 @@ namespace Books_Inventory_System
             {
                 endpoints.MapControllers();
             });
+
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
     }
 }
