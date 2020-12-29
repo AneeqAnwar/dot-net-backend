@@ -41,6 +41,8 @@ namespace Books_Inventory_System
             }
 
             string corsOrigin = Environment.GetEnvironmentVariable("AppSettings__corsOrigin");
+            corsOrigin = (corsOrigin == null) ? "" : corsOrigin;
+
             app.UseCors(builder => builder.WithOrigins(corsOrigin).AllowAnyMethod().AllowAnyHeader());
 
             app.UseRouting();
