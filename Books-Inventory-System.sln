@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books-Inventory-System.Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books-Inventory-System.IntegrationTests", "Books-Inventory-System.IntegrationTests\Books-Inventory-System.IntegrationTests.csproj", "{1BC23D42-08F6-42CE-B84C-37868E705337}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books-Inventory-System.ComponentTests", "Books-Inventory-System.ComponentTests\Books-Inventory-System.ComponentTests.csproj", "{C1680EE4-0F9C-4152-B207-39EC857E9D72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1BC23D42-08F6-42CE-B84C-37868E705337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BC23D42-08F6-42CE-B84C-37868E705337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BC23D42-08F6-42CE-B84C-37868E705337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1680EE4-0F9C-4152-B207-39EC857E9D72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1680EE4-0F9C-4152-B207-39EC857E9D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1680EE4-0F9C-4152-B207-39EC857E9D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1680EE4-0F9C-4152-B207-39EC857E9D72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

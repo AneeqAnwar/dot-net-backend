@@ -1,18 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Moq;
 using NUnit.Framework;
 
-namespace Books_Inventory_System.UnitTests
+namespace Books_Inventory_System.ComponentTests
 {
     [TestFixture]
     public class AuthRepositoryTests
     {
         DataContext dbContext;
-        Mock<IConfiguration> mockConfiguration;
+        IConfigurationRoot configuration;
 
         [SetUp]
         public void Setup()
@@ -22,11 +23,14 @@ namespace Books_Inventory_System.UnitTests
             .Options;
             dbContext = new DataContext(options);
 
-            var mockConfSection = new Mock<IConfigurationSection>();
-            mockConfSection.Setup(a => a.Value).Returns("my test secret key");
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"AppSettings:Token", "my test secret key"}
+            };
 
-            mockConfiguration = new Mock<IConfiguration>();
-            mockConfiguration.Setup(a => a.GetSection("AppSettings:Token")).Returns(mockConfSection.Object);
+            configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
         }
 
         [Test]
@@ -36,7 +40,7 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureCreated();
 
             User newUser = GetUser();
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
@@ -51,7 +55,7 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureCreated();
 
             User newUser = GetUser();
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             await authRepository.Register(newUser, "123456");
 
             ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
@@ -69,7 +73,7 @@ namespace Books_Inventory_System.UnitTests
 
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             await authRepository.Register(newUser, password);
 
             ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
@@ -87,7 +91,7 @@ namespace Books_Inventory_System.UnitTests
 
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             await authRepository.Register(newUser, password);
 
             newUser.Username = "changed";
@@ -107,7 +111,7 @@ namespace Books_Inventory_System.UnitTests
 
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             await authRepository.Register(newUser, password);
 
             password = "789";

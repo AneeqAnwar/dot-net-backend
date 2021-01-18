@@ -7,21 +7,22 @@ using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Models;
 using Books_Inventory_System.Services.BookService;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using NUnit.Framework;
 
-namespace Books_Inventory_System.UnitTests
+namespace Books_Inventory_System.ComponentTests
 {
     [TestFixture]
     public class BookServiceTests
     {
-        private Mock<IMapper> mapperMock;
+        private Mapper mapper;
         DataContext dbContext;
 
         [SetUp]
         public void Setup()
         {
-            mapperMock = new Mock<IMapper>();
+            AutoMapperProfile myProfile = new AutoMapperProfile();
+            MapperConfiguration configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
+            mapper = new Mapper(configuration);
 
             var options = new DbContextOptionsBuilder<DataContext>()
             .UseInMemoryDatabase(databaseName: "BooksDatabase")
@@ -35,12 +36,9 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            mapperMock.Setup(m => m.Map<Book>(It.IsAny<AddBookDto>())).Returns(BookTestData.Book());
-            mapperMock.Setup(m => m.Map<GetBookDto>(It.IsAny<Book>())).Returns(BookTestData.GetBookDto());
+            AddBookDto newBook = GetAddBookDto();
 
-            AddBookDto newBook = BookTestData.AddBookDto();
-
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<List<GetBookDto>> addBookResponse = await bookService.AddBook(newBook);
             GetBookDto savedBook = addBookResponse.Data.First();
@@ -61,12 +59,9 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            mapperMock.Setup(m => m.Map<Book>(It.IsAny<AddBookDto>())).Returns(BookTestData.Book());
-            mapperMock.Setup(m => m.Map<GetBookDto>(It.IsAny<Book>())).Returns(BookTestData.GetBookDto());
+            AddBookDto newBook = GetAddBookDto();
 
-            AddBookDto newBook = BookTestData.AddBookDto();
-
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<List<GetBookDto>> addBookResponse = await bookService.AddBook(newBook);
             GetBookDto savedBook = addBookResponse.Data.First();
@@ -88,15 +83,10 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            AddBookDto firstBook = BookTestData.AddBookDto();
-            AddBookDto secondBook = BookTestData.SecondAddBookDto();
+            AddBookDto firstBook = GetAddBookDto();
+            AddBookDto secondBook = GetAnotherAddBookDto();
 
-            mapperMock.Setup(m => m.Map<Book>(firstBook)).Returns(BookTestData.Book());
-            mapperMock.Setup(m => m.Map<Book>(secondBook)).Returns(BookTestData.SecondAddBookDtoMapping());
-            mapperMock.Setup(m => m.Map<GetBookDto>(BookTestData.Book())).Returns(BookTestData.BookMapping());
-            mapperMock.Setup(m => m.Map<GetBookDto>(BookTestData.SecondAddBookDtoMapping())).Returns(BookTestData.SecondAddBookDtoToGetBookDtoMapping());
-
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             await bookService.AddBook(firstBook);
             await bookService.AddBook(secondBook);
@@ -115,18 +105,14 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            AddBookDto newBook = BookTestData.AddBookDto();
+            AddBookDto newBook = GetAddBookDto();
 
-            mapperMock.Setup(m => m.Map<Book>(It.IsAny<AddBookDto>())).Returns(BookTestData.Book());
-            mapperMock.Setup(m => m.Map<UpdateBookDto>(It.IsAny<GetBookDto>())).Returns(BookTestData.AddBookDtoToUpdateBookDtoMapping());
-            mapperMock.Setup(m => m.Map<GetBookDto>(It.IsAny<Book>())).Returns(BookTestData.AddBookDtoToGetBookDtoMapping());
-
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<List<GetBookDto>> addBookResponse = await bookService.AddBook(newBook);
             GetBookDto addedBook = addBookResponse.Data.First();
 
-            UpdateBookDto updatedBook = mapperMock.Object.Map<UpdateBookDto>(addedBook);
+            UpdateBookDto updatedBook = mapper.Map<UpdateBookDto>(addedBook);
             updatedBook.Price = 900;
 
             ServiceResponse<GetBookDto> updatedBookResponse = await bookService.UpdateBook(updatedBook);
@@ -144,9 +130,9 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            UpdateBookDto updatedBook = BookTestData.UpdateBookDto();
+            UpdateBookDto updatedBook = GetUpdateBookDto();
 
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<GetBookDto> updatedBookResponse = await bookService.UpdateBook(updatedBook);
             GetBookDto savedBook = updatedBookResponse.Data;
@@ -162,12 +148,9 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            AddBookDto newBook = BookTestData.AddBookDto();
+            AddBookDto newBook = GetAddBookDto();
 
-            mapperMock.Setup(m => m.Map<Book>(It.IsAny<AddBookDto>())).Returns(BookTestData.Book());
-            mapperMock.Setup(m => m.Map<GetBookDto>(It.IsAny<Book>())).Returns(BookTestData.BookMapping());
-
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<List<GetBookDto>> addBookResponse = await bookService.AddBook(newBook);
             GetBookDto addedBook = addBookResponse.Data.First();
@@ -186,13 +169,44 @@ namespace Books_Inventory_System.UnitTests
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
-            BookService bookService = new BookService(mapperMock.Object, dbContext);
+            BookService bookService = new BookService(mapper, dbContext);
 
             ServiceResponse<List<GetBookDto>> deleteBookResponse = await bookService.DeleteBook(1);
 
             Assert.That(deleteBookResponse.Success, Is.EqualTo(false));
             Assert.That(deleteBookResponse, Is.InstanceOf<ServiceResponse<List<GetBookDto>>>());
             Assert.That(deleteBookResponse.Data, Is.EqualTo(null));
+        }
+
+        private AddBookDto GetAddBookDto()
+        {
+            return new AddBookDto
+            {
+                Name = "Delivering Happiness",
+                Description = "zappos.com",
+                Author = "Tony Hsieh",
+                Price = 899,
+                CategoryId = 1
+            };
+        }
+
+        private UpdateBookDto GetUpdateBookDto()
+        {
+            return new UpdateBookDto
+            {
+                Name = "Delivering Happiness",
+                Author = "Tony Hsieh"
+            };
+        }
+
+        private AddBookDto GetAnotherAddBookDto()
+        {
+            return new AddBookDto
+            {
+                Name = "Introduction to Algorithms",
+                Author = "Thomas H. Cormen",
+                CategoryId = 2
+            };
         }
     }
 }
