@@ -31,6 +31,11 @@ reports:
     files:
       - 'TestResults.xml'
     base-directory: 'Books-Inventory-System.UnitTests/TestResults/'
+  ComponentTestsReports:
+    file-format: NUNIT3XML
+    files:
+      - 'TestResults.xml'
+    base-directory: 'Books-Inventory-System.ComponentTests/TestResults/'
   IntegrationTestsReports:
     file-format: NUNIT3XML
     files:
