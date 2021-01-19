@@ -1,33 +1,50 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Books_Inventory_System.Controllers;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.User;
 using Books_Inventory_System.Models;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
-namespace Books_Inventory_System.UnitTests
+namespace Books_Inventory_System.ComponentTests
 {
     [TestFixture]
     public class AuthControllerTests
     {
-        Mock<IAuthRepository> mockRepository;
+        DataContext dbContext;
+        IConfigurationRoot configuration;
 
         [SetUp]
         public void Setup()
         {
-            mockRepository = new Mock<IAuthRepository>();
+            var options = new DbContextOptionsBuilder<DataContext>()
+            .UseInMemoryDatabase(databaseName: "UsersDatabase")
+            .Options;
+            dbContext = new DataContext(options);
+
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"AppSettings:Token", "my test secret key"}
+            };
+
+            configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
         }
 
         [Test]
         public async Task Register_NewUser_ReturnsOk()
         {
-            mockRepository.Setup(r => r.Register(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<int> { Data = 1 });
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
 
-            AuthController authController = new AuthController(mockRepository.Object);
             UserRegisterDto newUser = GetUserRegisterDto();
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
+            AuthController authController = new AuthController(authRepository);
 
             var result = await authController.Register(newUser);
 
@@ -37,11 +54,12 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Register_ExistingUser_ReturnsBadRequest()
         {
-            mockRepository.Setup(r => r.Register(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<int> { Success = false });
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
 
-            AuthController authController = new AuthController(mockRepository.Object);
             UserRegisterDto newUser = GetUserRegisterDto();
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
+            AuthController authController = new AuthController(authRepository);
 
             await authController.Register(newUser);
             var result = await authController.Register(newUser);
@@ -52,13 +70,12 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_ValidUser_ReturnsOk()
         {
-            mockRepository.Setup(r => r.Register(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<int> { Data = 1 });
-            mockRepository.Setup(r => r.Login(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<string> { Data = "some-token" });
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
 
-            AuthController authController = new AuthController(mockRepository.Object);
             UserRegisterDto newUser = GetUserRegisterDto();
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
+            AuthController authController = new AuthController(authRepository);
 
             await authController.Register(newUser);
             var result = await authController.Login(GetUserLoginDto());
@@ -69,13 +86,12 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_InvalidUsername_ReturnsBadRequest()
         {
-            mockRepository.Setup(r => r.Register(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<int> { Data = 1 });
-            mockRepository.Setup(r => r.Login(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<string> { Success = false });
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
 
-            AuthController authController = new AuthController(mockRepository.Object);
             UserRegisterDto newUser = GetUserRegisterDto();
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
+            AuthController authController = new AuthController(authRepository);
 
             await authController.Register(newUser);
 
@@ -90,13 +106,12 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_InvalidPassword_ReturnsBadRequest()
         {
-            mockRepository.Setup(r => r.Register(It.IsAny<User>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<int> { Data = 1 });
-            mockRepository.Setup(r => r.Login(It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ServiceResponse<string> { Success = false });
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
 
-            AuthController authController = new AuthController(mockRepository.Object);
             UserRegisterDto newUser = GetUserRegisterDto();
+            AuthRepository authRepository = new AuthRepository(dbContext, configuration);
+            AuthController authController = new AuthController(authRepository);
 
             await authController.Register(newUser);
 

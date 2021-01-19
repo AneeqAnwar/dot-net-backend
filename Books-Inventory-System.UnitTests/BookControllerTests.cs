@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Threading.Tasks;
 using Books_Inventory_System.Controllers;
-using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Services.BookService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Moq;
 using NUnit.Framework;
 
 namespace Books_Inventory_System.UnitTests
@@ -14,32 +11,22 @@ namespace Books_Inventory_System.UnitTests
     [TestFixture]
     public class BookControllerTests
     {
-        private Mapper mapper;
-        DataContext dbContext;
+        Mock<IBookService> mockService;
 
         [SetUp]
         public void Setup()
         {
-            AutoMapperProfile myProfile = new AutoMapperProfile();
-            MapperConfiguration configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
-            mapper = new Mapper(configuration);
-
-            var options = new DbContextOptionsBuilder<DataContext>()
-            .UseInMemoryDatabase(databaseName: "BooksDatabase")
-            .Options;
-            dbContext = new DataContext(options);
+            mockService = new Mock<IBookService>();
         }
 
         [Test]
         public async Task AddBook_NewBook_ReturnsOk()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
+                .ReturnsAsync(BookTestData.AddBookServiceResponse());
 
-            AddBookDto newBook = GetAddBookDto();
-
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
+            AddBookDto newBook = BookTestData.AddBookDto();
 
             var result = await bookController.AddBook(newBook);
 
@@ -49,13 +36,13 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task GetBookById_ExistingBook_ReturnsOk()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
+                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+            mockService.Setup(s => s.GetBookById(It.IsAny<int>()))
+                .ReturnsAsync(BookTestData.GetSingleBookServiceResponse());
 
-            AddBookDto newBook = GetAddBookDto();
-
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
+            AddBookDto newBook = BookTestData.AddBookDto();
 
             await bookController.AddBook(newBook);
 
@@ -67,13 +54,11 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task GetAllBooks_ReturnsOk()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.GetAllBooks())
+                .ReturnsAsync(BookTestData.GetAllBooksServiceResponse());
 
-            AddBookDto newBook = GetAddBookDto();
-
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
+            AddBookDto newBook = BookTestData.AddBookDto();
 
             await bookController.AddBook(newBook);
 
@@ -85,17 +70,17 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task UpdateBook_ExistingBook_ReturnsOk()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
+                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+            mockService.Setup(s => s.UpdateBook(It.IsAny<UpdateBookDto>()))
+                .ReturnsAsync(BookTestData.UpdateBookServiceResponse());
 
-            AddBookDto newBook = GetAddBookDto();
-
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
+            AddBookDto newBook = BookTestData.AddBookDto();
 
             await bookController.AddBook(newBook);
 
-            UpdateBookDto updatedBook = GetUpdateBookDto();
+            UpdateBookDto updatedBook = BookTestData.UpdateBookDto();
             var result = await bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
@@ -104,13 +89,12 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task UpdateBook_NonExistingBook_ReturnsNotFound()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.UpdateBook(It.IsAny<UpdateBookDto>()))
+                .ReturnsAsync(BookTestData.UpdateBookServiceResponseNullData());
 
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
 
-            UpdateBookDto updatedBook = GetUpdateBookDto();
+            UpdateBookDto updatedBook = BookTestData.UpdateBookDto();
             var result = await bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
@@ -119,13 +103,13 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task DeleteBook_ExistingBook_ReturnsOk()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
+                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+            mockService.Setup(s => s.DeleteBook(It.IsAny<int>()))
+                .ReturnsAsync(BookTestData.DeleteBookServiceResponse());
 
-            AddBookDto newBook = GetAddBookDto();
-
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
+            AddBookDto newBook = BookTestData.AddBookDto();
 
             await bookController.AddBook(newBook);
 
@@ -137,11 +121,10 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task DeleteBook_NonExistingBook_ReturnsNotFound()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            mockService.Setup(s => s.DeleteBook(It.IsAny<int>()))
+                .ReturnsAsync(BookTestData.DeleteBookServiceResponseNullData());
 
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
 
             var result = await bookController.DeleteBook(1);
 
@@ -151,34 +134,11 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public void CheckStatus_ReturnsOk()
         {
-            BookService bookService = new BookService(mapper, dbContext);
-            BookController bookController = new BookController(bookService);
+            BookController bookController = new BookController(mockService.Object);
 
             var result = bookController.CheckStatus();
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
-        }
-
-        private AddBookDto GetAddBookDto()
-        {
-            return new AddBookDto
-            {
-                Name = "Delivering Happiness",
-                Description = "zappos.com",
-                Author = "Tony Hsieh",
-                Price = 899,
-                CategoryId = 1
-            };
-        }
-
-        private UpdateBookDto GetUpdateBookDto()
-        {
-            return new UpdateBookDto
-            {
-                Id = 1,
-                Name = "The 7 habits of highly effective people",
-                Author = "Stephen R. Covey"
-            };
         }
     }
 }
