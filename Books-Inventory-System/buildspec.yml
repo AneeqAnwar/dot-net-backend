@@ -9,7 +9,11 @@ phases:
   pre_build:
     commands:
       - echo Unit Tests Execution
-      - dotnet test --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage"
+      - dotnet test Books-Inventory-System.UnitTests/ --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage"
+      - echo Component Tests Execution
+      - dotnet test Books-Inventory-System.ComponentTests/ --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage"
+      - echo Integration Tests Execution
+      - dotnet test Books-Inventory-System.IntegrationTests/ --test-adapter-path:. --logger:nunit --collect:"XPlat Code Coverage"
       - mv Books-Inventory-System.UnitTests/TestResults/**/coverage.cobertura.xml Books-Inventory-System.UnitTests/TestResults
       - echo Restore started on `date`
       - cd Books-Inventory-System
