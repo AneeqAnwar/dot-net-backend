@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Models;
 using Microsoft.EntityFrameworkCore;
@@ -34,14 +32,14 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Register_NonExistingUser_ReturnsUserId()
+        public void Register_NonExistingUser_ReturnsUserId()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
             User newUser = GetUser();
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
-            ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
+            ServiceResponse<int> registerUserResponse = authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
             Assert.That(registerUserResponse.Success, Is.EqualTo(true));
@@ -49,16 +47,16 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Register_ExistingUser_ReturnsError()
+        public void Register_ExistingUser_ReturnsError()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
 
             User newUser = GetUser();
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
-            await authRepository.Register(newUser, "123456");
+            authRepository.Register(newUser, "123456");
 
-            ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
+            ServiceResponse<int> registerUserResponse = authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
             Assert.That(registerUserResponse.Success, Is.EqualTo(false));
@@ -66,7 +64,7 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Login_ValidUser_ReturnsJwtToken()
+        public void Login_ValidUser_ReturnsJwtToken()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -74,9 +72,9 @@ namespace Books_Inventory_System.ComponentTests
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(newUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(true));
@@ -84,7 +82,7 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Login_InvalidUsername_ReturnsError()
+        public void Login_InvalidUsername_ReturnsError()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -92,10 +90,10 @@ namespace Books_Inventory_System.ComponentTests
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
             newUser.Username = "changed";
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(newUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(false));
@@ -104,7 +102,7 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Login_InvalidPassword_ReturnsError()
+        public void Login_InvalidPassword_ReturnsError()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -112,10 +110,10 @@ namespace Books_Inventory_System.ComponentTests
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
             password = "789";
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(newUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(false));

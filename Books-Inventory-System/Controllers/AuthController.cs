@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Books_Inventory_System.Data;
+﻿using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.User;
 using Books_Inventory_System.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +17,9 @@ namespace Books_Inventory_System.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserRegisterDto request)
+        public IActionResult Register(UserRegisterDto request)
         {
-            ServiceResponse<int> response = await authRepository.Register(
+            ServiceResponse<int> response = authRepository.Register(
                 new User { Username = request.Username }, request.Password
             );
 
@@ -34,9 +33,9 @@ namespace Books_Inventory_System.Controllers
 
         [HttpPost("Login")]
 
-        public async Task<IActionResult> Login(UserLoginDto request)
+        public IActionResult Login(UserLoginDto request)
         {
-            ServiceResponse<string> response = await authRepository.Login(
+            ServiceResponse<string> response = authRepository.Login(
                 request.Username, request.Password
             );
 

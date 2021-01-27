@@ -4,9 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Books_Inventory_System.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,7 +21,7 @@ namespace Books_Inventory_System.Data
             this.configuration = configuration;
         }
 
-        public async Task<ServiceResponse<string>> Login(string username, string password)
+        public ServiceResponse<string> Login(string username, string password)
         {
             ServiceResponse<string> response = new ServiceResponse<string>();
 
@@ -47,11 +45,11 @@ namespace Books_Inventory_System.Data
             return response;
         }
 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
+        public ServiceResponse<int> Register(User user, string password)
         {
             ServiceResponse<int> response = new ServiceResponse<int>();
 
-            if (await UserExists(user.Username))
+            if (UserExists(user.Username))
             {
                 response.Success = false;
                 response.Message = "User already exists.";
@@ -72,7 +70,7 @@ namespace Books_Inventory_System.Data
             return response;
         }
 
-        public async Task<bool> UserExists(string username)
+        public bool UserExists(string username)
         {
             if (dataContext.Users.Any(x => x.Username.ToLower() == username.ToLower()))
             {

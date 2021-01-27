@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Books_Inventory_System.Controllers;
+﻿using Books_Inventory_System.Controllers;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Services.BookService;
 using Microsoft.AspNetCore.Mvc;
@@ -20,113 +19,113 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task AddBook_NewBook_ReturnsOk()
+        public void AddBook_NewBook_ReturnsOk()
         {
             mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
-                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+                .Returns(BookTestData.AddBookServiceResponse());
 
             BookController bookController = new BookController(mockService.Object);
             AddBookDto newBook = BookTestData.AddBookDto();
 
-            var result = await bookController.AddBook(newBook);
+            var result = bookController.AddBook(newBook);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task GetBookById_ExistingBook_ReturnsOk()
+        public void GetBookById_ExistingBook_ReturnsOk()
         {
             mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
-                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+                .Returns(BookTestData.AddBookServiceResponse());
             mockService.Setup(s => s.GetBookById(It.IsAny<int>()))
-                .ReturnsAsync(BookTestData.GetSingleBookServiceResponse());
+                .Returns(BookTestData.GetSingleBookServiceResponse());
 
             BookController bookController = new BookController(mockService.Object);
             AddBookDto newBook = BookTestData.AddBookDto();
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.GetSingleBook(1);
+            var result = bookController.GetSingleBook(1);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task GetAllBooks_ReturnsOk()
+        public void GetAllBooks_ReturnsOk()
         {
             mockService.Setup(s => s.GetAllBooks())
-                .ReturnsAsync(BookTestData.GetAllBooksServiceResponse());
+                .Returns(BookTestData.GetAllBooksServiceResponse());
 
             BookController bookController = new BookController(mockService.Object);
             AddBookDto newBook = BookTestData.AddBookDto();
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.Get();
+            var result = bookController.Get();
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task UpdateBook_ExistingBook_ReturnsOk()
+        public void UpdateBook_ExistingBook_ReturnsOk()
         {
             mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
-                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+                .Returns(BookTestData.AddBookServiceResponse());
             mockService.Setup(s => s.UpdateBook(It.IsAny<UpdateBookDto>()))
-                .ReturnsAsync(BookTestData.UpdateBookServiceResponse());
+                .Returns(BookTestData.UpdateBookServiceResponse());
 
             BookController bookController = new BookController(mockService.Object);
             AddBookDto newBook = BookTestData.AddBookDto();
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
             UpdateBookDto updatedBook = BookTestData.UpdateBookDto();
-            var result = await bookController.UpdateBook(updatedBook);
+            var result = bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task UpdateBook_NonExistingBook_ReturnsNotFound()
+        public void UpdateBook_NonExistingBook_ReturnsNotFound()
         {
             mockService.Setup(s => s.UpdateBook(It.IsAny<UpdateBookDto>()))
-                .ReturnsAsync(BookTestData.UpdateBookServiceResponseNullData());
+                .Returns(BookTestData.UpdateBookServiceResponseNullData());
 
             BookController bookController = new BookController(mockService.Object);
 
             UpdateBookDto updatedBook = BookTestData.UpdateBookDto();
-            var result = await bookController.UpdateBook(updatedBook);
+            var result = bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
 
         [Test]
-        public async Task DeleteBook_ExistingBook_ReturnsOk()
+        public void DeleteBook_ExistingBook_ReturnsOk()
         {
             mockService.Setup(s => s.AddBook(It.IsAny<AddBookDto>()))
-                .ReturnsAsync(BookTestData.AddBookServiceResponse());
+                .Returns(BookTestData.AddBookServiceResponse());
             mockService.Setup(s => s.DeleteBook(It.IsAny<int>()))
-                .ReturnsAsync(BookTestData.DeleteBookServiceResponse());
+                .Returns(BookTestData.DeleteBookServiceResponse());
 
             BookController bookController = new BookController(mockService.Object);
             AddBookDto newBook = BookTestData.AddBookDto();
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.DeleteBook(1);
+            var result = bookController.DeleteBook(1);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task DeleteBook_NonExistingBook_ReturnsNotFound()
+        public void DeleteBook_NonExistingBook_ReturnsNotFound()
         {
             mockService.Setup(s => s.DeleteBook(It.IsAny<int>()))
-                .ReturnsAsync(BookTestData.DeleteBookServiceResponseNullData());
+                .Returns(BookTestData.DeleteBookServiceResponseNullData());
 
             BookController bookController = new BookController(mockService.Object);
 
-            var result = await bookController.DeleteBook(1);
+            var result = bookController.DeleteBook(1);
 
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Books_Inventory_System.Services.BookService
 {
@@ -21,7 +19,7 @@ namespace Books_Inventory_System.Services.BookService
         private readonly IMapper mapper;
         private readonly IDataContext dataContext;
 
-        public async Task<ServiceResponse<List<GetBookDto>>> AddBook(AddBookDto book)
+        public ServiceResponse<List<GetBookDto>> AddBook(AddBookDto book)
         {
             ServiceResponse<List<GetBookDto>> serviceResponse = new ServiceResponse<List<GetBookDto>>();
             Book newBook = mapper.Map<Book>(book);
@@ -33,7 +31,7 @@ namespace Books_Inventory_System.Services.BookService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetBookDto>>> GetAllBooks()
+        public ServiceResponse<List<GetBookDto>> GetAllBooks()
         {
             ServiceResponse<List<GetBookDto>> serviceResponse = new ServiceResponse<List<GetBookDto>>();
 
@@ -43,7 +41,7 @@ namespace Books_Inventory_System.Services.BookService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetBookDto>> GetBookById(int id)
+        public ServiceResponse<GetBookDto> GetBookById(int id)
         {
             ServiceResponse<GetBookDto> serviceResponse = new ServiceResponse<GetBookDto>();
             Book dbBook = dataContext.Books.FirstOrDefault(b => b.Id == id);
@@ -52,7 +50,7 @@ namespace Books_Inventory_System.Services.BookService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetBookDto>> UpdateBook(UpdateBookDto updateBook)
+        public ServiceResponse<GetBookDto> UpdateBook(UpdateBookDto updateBook)
         {
             ServiceResponse<GetBookDto> serviceResponse = new ServiceResponse<GetBookDto>();
 
@@ -80,7 +78,7 @@ namespace Books_Inventory_System.Services.BookService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetBookDto>>> DeleteBook(int id)
+        public ServiceResponse<List<GetBookDto>> DeleteBook(int id)
         {
             ServiceResponse<List<GetBookDto>> serviceResponse = new ServiceResponse<List<GetBookDto>>();
 

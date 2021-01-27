@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Models;
 using Microsoft.Extensions.Configuration;
@@ -34,11 +33,11 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task Register_NonExistingUser_ReturnsUserId()
+        public void Register_NonExistingUser_ReturnsUserId()
         {
             User newUser = GetUser();
             AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
-            ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
+            ServiceResponse<int> registerUserResponse = authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
             Assert.That(registerUserResponse.Success, Is.EqualTo(true));
@@ -46,13 +45,13 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task Register_ExistingUser_ReturnsError()
+        public void Register_ExistingUser_ReturnsError()
         {
             User newUser = GetUser();
             AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
-            await authRepository.Register(newUser, "123456");
+            authRepository.Register(newUser, "123456");
 
-            ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
+            ServiceResponse<int> registerUserResponse = authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
             Assert.That(registerUserResponse.Success, Is.EqualTo(false));
@@ -60,14 +59,14 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task Login_ValidUser_ReturnsJwtToken()
+        public void Login_ValidUser_ReturnsJwtToken()
         {
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(newUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(true));
@@ -75,16 +74,16 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task Login_InvalidUsername_ReturnsError()
+        public void Login_InvalidUsername_ReturnsError()
         {
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
             User loginUser = GetUser();
             loginUser.Username = "changed";
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(loginUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(loginUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(false));
@@ -93,15 +92,15 @@ namespace Books_Inventory_System.UnitTests
         }
 
         [Test]
-        public async Task Login_InvalidPassword_ReturnsError()
+        public void Login_InvalidPassword_ReturnsError()
         {
             User newUser = GetUser();
             string password = "123456";
             AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
-            await authRepository.Register(newUser, password);
+            authRepository.Register(newUser, password);
 
             password = "789";
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            ServiceResponse<string> loginUserResponse = authRepository.Login(newUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(false));

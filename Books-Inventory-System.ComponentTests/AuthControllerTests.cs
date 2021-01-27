@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Books_Inventory_System.Controllers;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.User;
-using Books_Inventory_System.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +34,7 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task Register_NewUser_ReturnsOk()
+        public void Register_NewUser_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -46,13 +43,13 @@ namespace Books_Inventory_System.ComponentTests
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             AuthController authController = new AuthController(authRepository);
 
-            var result = await authController.Register(newUser);
+            var result = authController.Register(newUser);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task Register_ExistingUser_ReturnsBadRequest()
+        public void Register_ExistingUser_ReturnsBadRequest()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -61,14 +58,14 @@ namespace Books_Inventory_System.ComponentTests
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             AuthController authController = new AuthController(authRepository);
 
-            await authController.Register(newUser);
-            var result = await authController.Register(newUser);
+            authController.Register(newUser);
+            var result = authController.Register(newUser);
 
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Login_ValidUser_ReturnsOk()
+        public void Login_ValidUser_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -77,14 +74,14 @@ namespace Books_Inventory_System.ComponentTests
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             AuthController authController = new AuthController(authRepository);
 
-            await authController.Register(newUser);
-            var result = await authController.Login(GetUserLoginDto());
+            authController.Register(newUser);
+            var result = authController.Login(GetUserLoginDto());
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task Login_InvalidUsername_ReturnsBadRequest()
+        public void Login_InvalidUsername_ReturnsBadRequest()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -93,18 +90,18 @@ namespace Books_Inventory_System.ComponentTests
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             AuthController authController = new AuthController(authRepository);
 
-            await authController.Register(newUser);
+            authController.Register(newUser);
 
             UserLoginDto userLoginDto = GetUserLoginDto();
             userLoginDto.Username = "changed";
 
-            var result = await authController.Login(userLoginDto);
+            var result = authController.Login(userLoginDto);
 
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
-        public async Task Login_InvalidPassword_ReturnsBadRequest()
+        public void Login_InvalidPassword_ReturnsBadRequest()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -113,12 +110,12 @@ namespace Books_Inventory_System.ComponentTests
             AuthRepository authRepository = new AuthRepository(dbContext, configuration);
             AuthController authController = new AuthController(authRepository);
 
-            await authController.Register(newUser);
+            authController.Register(newUser);
 
             UserLoginDto userLoginDto = GetUserLoginDto();
             userLoginDto.Password = "changed";
 
-            var result = await authController.Login(userLoginDto);
+            var result = authController.Login(userLoginDto);
 
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }

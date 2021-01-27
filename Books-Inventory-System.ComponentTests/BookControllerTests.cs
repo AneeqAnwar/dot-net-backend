@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Books_Inventory_System.Controllers;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Dtos.Book;
@@ -31,7 +29,7 @@ namespace Books_Inventory_System.ComponentTests
         }
 
         [Test]
-        public async Task AddBook_NewBook_ReturnsOk()
+        public void AddBook_NewBook_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -41,13 +39,13 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            var result = await bookController.AddBook(newBook);
+            var result = bookController.AddBook(newBook);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task GetBookById_ExistingBook_ReturnsOk()
+        public void GetBookById_ExistingBook_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -57,15 +55,15 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.GetSingleBook(1);
+            var result = bookController.GetSingleBook(1);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task GetAllBooks_ReturnsOk()
+        public void GetAllBooks_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -75,15 +73,15 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.Get();
+            var result = bookController.Get();
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task UpdateBook_ExistingBook_ReturnsOk()
+        public void UpdateBook_ExistingBook_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -93,16 +91,16 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
             UpdateBookDto updatedBook = GetUpdateBookDto();
-            var result = await bookController.UpdateBook(updatedBook);
+            var result = bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task UpdateBook_NonExistingBook_ReturnsNotFound()
+        public void UpdateBook_NonExistingBook_ReturnsNotFound()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -111,13 +109,13 @@ namespace Books_Inventory_System.ComponentTests
             BookController bookController = new BookController(bookService);
 
             UpdateBookDto updatedBook = GetUpdateBookDto();
-            var result = await bookController.UpdateBook(updatedBook);
+            var result = bookController.UpdateBook(updatedBook);
 
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }
 
         [Test]
-        public async Task DeleteBook_ExistingBook_ReturnsOk()
+        public void DeleteBook_ExistingBook_ReturnsOk()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -127,15 +125,15 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            await bookController.AddBook(newBook);
+            bookController.AddBook(newBook);
 
-            var result = await bookController.DeleteBook(1);
+            var result = bookController.DeleteBook(1);
 
             Assert.That(result, Is.InstanceOf<OkObjectResult>());
         }
 
         [Test]
-        public async Task DeleteBook_NonExistingBook_ReturnsNotFound()
+        public void DeleteBook_NonExistingBook_ReturnsNotFound()
         {
             dbContext.Database.EnsureDeleted();
             dbContext.Database.EnsureCreated();
@@ -143,7 +141,7 @@ namespace Books_Inventory_System.ComponentTests
             BookService bookService = new BookService(mapper, dbContext);
             BookController bookController = new BookController(bookService);
 
-            var result = await bookController.DeleteBook(1);
+            var result = bookController.DeleteBook(1);
 
             Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
         }

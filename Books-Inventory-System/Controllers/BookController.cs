@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Books_Inventory_System.Dtos.Book;
 using Books_Inventory_System.Models;
 using Books_Inventory_System.Services.BookService;
@@ -20,27 +19,27 @@ namespace Books_Inventory_System.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            return Ok(await bookService.GetAllBooks());
+            return Ok(bookService.GetAllBooks());
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingleBook(int id)
+        public IActionResult GetSingleBook(int id)
         {
-            return Ok(await bookService.GetBookById(id));
+            return Ok(bookService.GetBookById(id));
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddBook(AddBookDto book)
+        public IActionResult AddBook(AddBookDto book)
         {
-            return Ok(await bookService.AddBook(book));
+            return Ok(bookService.AddBook(book));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateBook(UpdateBookDto updatedBook)
+        public IActionResult UpdateBook(UpdateBookDto updatedBook)
         {
-            ServiceResponse<GetBookDto> response = await bookService.UpdateBook(updatedBook);
+            ServiceResponse<GetBookDto> response = bookService.UpdateBook(updatedBook);
 
             if(response.Data == null)
             {
@@ -50,9 +49,9 @@ namespace Books_Inventory_System.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook(int id)
+        public IActionResult DeleteBook(int id)
         {
-            ServiceResponse<List<GetBookDto>> response = await bookService.DeleteBook(id);
+            ServiceResponse<List<GetBookDto>> response = bookService.DeleteBook(id);
 
             if (response.Data == null)
             {
