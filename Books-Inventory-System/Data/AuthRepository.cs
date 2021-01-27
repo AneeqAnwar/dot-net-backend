@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +14,10 @@ namespace Books_Inventory_System.Data
 {
     public class AuthRepository : IAuthRepository
     {
-        private readonly DataContext dataContext;
+        private readonly IDataContext dataContext;
         private readonly IConfiguration configuration;
 
-        public AuthRepository(DataContext dataContext, IConfiguration configuration)
+        public AuthRepository(IDataContext dataContext, IConfiguration configuration)
         {
             this.dataContext = dataContext;
             this.configuration = configuration;
@@ -26,7 +27,7 @@ namespace Books_Inventory_System.Data
         {
             ServiceResponse<string> response = new ServiceResponse<string>();
 
-            User user = await dataContext.Users.FirstOrDefaultAsync(x => x.Username.ToLower().Equals(username.ToLower()));
+            User user = dataContext.Users.FirstOrDefault(x => x.Username.ToLower().Equals(username.ToLower()));
 
             if (user == null)
             {
@@ -63,8 +64,8 @@ namespace Books_Inventory_System.Data
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            await dataContext.Users.AddAsync(user);
-            await dataContext.SaveChangesAsync();
+            dataContext.Users.Add(user);
+            dataContext.SaveChanges();
 
             response.Data = user.Id;
 
@@ -73,7 +74,7 @@ namespace Books_Inventory_System.Data
 
         public async Task<bool> UserExists(string username)
         {
-            if (await dataContext.Users.AnyAsync(x => x.Username.ToLower() == username.ToLower()))
+            if (dataContext.Users.Any(x => x.Username.ToLower() == username.ToLower()))
             {
                 return true;
             }

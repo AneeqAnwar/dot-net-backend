@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Books_Inventory_System.Data;
 using Books_Inventory_System.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
@@ -11,16 +11,20 @@ namespace Books_Inventory_System.UnitTests
     [TestFixture]
     public class AuthRepositoryTests
     {
-        DataContext dbContext;
-        Mock<IConfiguration> mockConfiguration;
+        private Mock<IConfiguration> mockConfiguration;
+        private Mock<IDataContext> dbContextMock;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
-            .UseInMemoryDatabase(databaseName: "UsersDatabase")
-            .Options;
-            dbContext = new DataContext(options);
+            List<User> users = new List<User>
+            {
+                GetDummyUser()
+            };
+
+            dbContextMock = new Mock<IDataContext>();
+            dbContextMock.Setup(p => p.Users).Returns(DbContextMock.GetQueryableMockDbSet<User>(users));
+            dbContextMock.Setup(p => p.SaveChanges()).Returns(1);
 
             var mockConfSection = new Mock<IConfigurationSection>();
             mockConfSection.Setup(a => a.Value).Returns("my test secret key");
@@ -32,11 +36,8 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Register_NonExistingUser_ReturnsUserId()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
             User newUser = GetUser();
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
             ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
 
             Assert.That(registerUserResponse, Is.InstanceOf<ServiceResponse<int>>());
@@ -47,11 +48,8 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Register_ExistingUser_ReturnsError()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
             User newUser = GetUser();
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
             await authRepository.Register(newUser, "123456");
 
             ServiceResponse<int> registerUserResponse = await authRepository.Register(newUser, "123456");
@@ -64,12 +62,9 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_ValidUser_ReturnsJwtToken()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
             await authRepository.Register(newUser, password);
 
             ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
@@ -82,16 +77,14 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_InvalidUsername_ReturnsError()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
             await authRepository.Register(newUser, password);
 
-            newUser.Username = "changed";
-            ServiceResponse<string> loginUserResponse = await authRepository.Login(newUser.Username, password);
+            User loginUser = GetUser();
+            loginUser.Username = "changed";
+            ServiceResponse<string> loginUserResponse = await authRepository.Login(loginUser.Username, password);
 
             Assert.That(loginUserResponse, Is.InstanceOf<ServiceResponse<string>>());
             Assert.That(loginUserResponse.Success, Is.EqualTo(false));
@@ -102,12 +95,9 @@ namespace Books_Inventory_System.UnitTests
         [Test]
         public async Task Login_InvalidPassword_ReturnsError()
         {
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
-
             User newUser = GetUser();
             string password = "123456";
-            AuthRepository authRepository = new AuthRepository(dbContext, mockConfiguration.Object);
+            AuthRepository authRepository = new AuthRepository(dbContextMock.Object, mockConfiguration.Object);
             await authRepository.Register(newUser, password);
 
             password = "789";
@@ -125,6 +115,15 @@ namespace Books_Inventory_System.UnitTests
             {
                 Id = 1,
                 Username = "Aneeq",
+            };
+        }
+
+        private User GetDummyUser()
+        {
+            return new User
+            {
+                Id = 99,
+                Username = "Dummy User",
             };
         }
     }
