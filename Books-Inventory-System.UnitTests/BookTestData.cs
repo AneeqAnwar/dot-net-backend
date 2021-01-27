@@ -56,6 +56,19 @@ namespace Books_Inventory_System.UnitTests
             };
         }
 
+        public static Book BookDummy()
+        {
+            return new Book
+            {
+                Id = 99,
+                Name = "Dummy Book",
+                Description = "Dummy Desc",
+                Author = "Dummy Author",
+                Price = 1,
+                CategoryId = 1
+            };
+        }
+
         public static GetBookDto BookMapping()
         {
             return new GetBookDto

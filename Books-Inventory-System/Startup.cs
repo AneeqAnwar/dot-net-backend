@@ -28,6 +28,7 @@ namespace Books_Inventory_System
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDataContext, DataContext>();
 
             services.AddSwaggerDocument();
         }
