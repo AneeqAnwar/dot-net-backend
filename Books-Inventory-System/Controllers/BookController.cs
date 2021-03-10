@@ -63,7 +63,7 @@ namespace Books_Inventory_System.Controllers
         [HttpGet("Status")]
         public IActionResult CheckStatus()
         {
-            return Ok("The book inventory is up and running!!!");
+            return Ok("The updated book inventory is up and running!!!");
         }
     }
 }
